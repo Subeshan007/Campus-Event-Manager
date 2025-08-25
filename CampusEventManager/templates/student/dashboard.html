@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - SMVEC Events{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary text-white">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <i class="fas fa-user-graduate"></i>
+                        Welcome back, {{ session.username }}!
+                    </h2>
+                    <p class="card-text">Discover exciting events happening on campus</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center quick-action-card">
+                <div class="card-body">
+                    <i class="fas fa-calendar-alt fa-2x text-primary mb-2"></i>
+                    <h6>Browse Events</h6>
+                    <a href="{{ url_for('student.events') }}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center quick-action-card">
+                <div class="card-body">
+                    <i class="fas fa-ticket-alt fa-2x text-success mb-2"></i>
+                    <h6>My Events</h6>
+                    <a href="{{ url_for('student.my_events') }}" class="btn btn-sm btn-success">View</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center quick-action-card">
+                <div class="card-body">
+                    <i class="fas fa-calendar fa-2x text-info mb-2"></i>
+                    <h6>Calendar View</h6>
+                    <a href="{{ url_for('student.calendar') }}" class="btn btn-sm btn-info">Open</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center quick-action-card">
+                <div class="card-body">
+                    <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                    <h6>Feedback</h6>
+                    <span class="badge bg-warning text-dark">Coming Soon</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if user_registrations %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4><i class="fas fa-bookmark"></i> My Registered Events</h4>
+            <div class="row">
+                {% for item in user_registrations[:3] %}
+                <div class="col-md-4 mb-3">
+                    <div class="card event-card">
+                        <div class="card-body">
+                            <h6 class="card-title">{{ item.event.title }}</h6>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt"></i> {{ item.event.venue }}<br>
+                                    <i class="fas fa-clock"></i> {{ item.event.start_date.strftime('%B %d, %Y at %I:%M %p') }}
+                                </small>
+                            </p>
+                            <span class="badge bg-{% if item.event.start_date > datetime.now() %}primary{% else %}secondary{% endif %}">
+                                {% if item.event.start_date > datetime.now() %}Upcoming{% else %}Past{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <a href="{{ url_for('student.my_events') }}" class="btn btn-outline-primary">
+                    View All My Events
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-12">
+            <h4><i class="fas fa-calendar-check"></i> Upcoming Events</h4>
+            {% if upcoming_events %}
+                <div class="row">
+                    {% for event in upcoming_events %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card event-card h-100">
+                            {% if event.image_path %}
+                            <img src="{{ url_for('static', filename=event.image_path) }}" class="card-img-top" alt="{{ event.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ event.title }}</h5>
+                                <p class="card-text">{{ event.description[:100] }}{% if event.description|length > 100 %}...{% endif %}</p>
+
+                                <div class="event-details">
+                                    <p class="mb-1">
+                                        <i class="fas fa-map-marker-alt text-danger"></i>
+                                        <strong>Venue:</strong> {{ event.venue }}
+                                    </p>
+                                    <p class="mb-1">
+                                        <i class="fas fa-clock text-primary"></i>
+                                        <strong>Date:</strong> {{ event.start_date.strftime('%B %d, %Y') }}
+                                    </p>
+                                    <p class="mb-1">
+                                        <i class="fas fa-time text-info"></i>
+                                        <strong>Time:</strong> {{ event.start_date.strftime('%I:%M %p') }}
+                                    </p>
+                                    <p class="mb-2">
+                                        <i class="fas fa-tag text-success"></i>
+                                        <span class="badge bg-secondary">{{ event.category }}</span>
+                                    </p>
+
+                                    {% if event.max_attendees %}
+                                    <div class="progress mb-2">
+                                        <div class="progress-bar" role="progressbar"
+                                             style="width: {{ (event.current_attendees / event.max_attendees * 100) }}%">
+                                            {{ event.current_attendees }}/{{ event.max_attendees }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <a href="{{ url_for('student.event_detail', event_id=event.id) }}"
+                                   class="btn btn-primary w-100">
+                                    <i class="fas fa-info-circle"></i> View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="text-center">
+                    <a href="{{ url_for('student.events') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-calendar-alt"></i> View All Events
+                    </a>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-times fa-5x text-muted mb-3"></i>
+                    <h5>No upcoming events found</h5>
+                    <p class="text-muted">Check back later for new events!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Team Options Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-users"></i> Team Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                                    <h6>My Teams</h6>
+                                    <p class="text-muted small">View and manage your teams</p>
+                                    <a href="{{ url_for('team.my_teams') }}" class="btn btn-primary btn-sm">
+                                        View Teams
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user-plus fa-2x text-success mb-2"></i>
+                                    <h6>Join Team</h6>
+                                    <p class="text-muted small">Join an existing team with code</p>
+                                    <a href="{{ url_for('team.join_team') }}" class="btn btn-success btn-sm">
+                                        Join Team
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-search fa-2x text-info mb-2"></i>
+                                    <h6>Competitions</h6>
+                                    <p class="text-muted small">Find team-based competitions</p>
+                                    <a href="{{ url_for('student.events') }}?category=Competition" class="btn btn-info btn-sm">
+                                        Browse
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

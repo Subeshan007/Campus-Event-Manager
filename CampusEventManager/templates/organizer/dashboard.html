@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Organizer Dashboard - SMVEC Events{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-success text-white">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <i class="fas fa-users"></i>
+                        Welcome, {{ session.username }}!
+                    </h2>
+                    <p class="card-text">Manage your events and track participation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-calendar-alt fa-3x text-primary mb-3"></i>
+                    <h3 class="text-primary">{{ stats.total_events }}</h3>
+                    <p class="card-text">Total Events</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                    <h3 class="text-success">{{ stats.approved_events }}</h3>
+                    <p class="card-text">Approved Events</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+                    <h3 class="text-warning">{{ stats.pending_events }}</h3>
+                    <p class="card-text">Pending Approval</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-info mb-3"></i>
+                    <h3 class="text-info">{{ stats.total_registrations }}</h3>
+                    <p class="card-text">Total Registrations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="{{ url_for('organizer.create_event') }}" class="btn btn-success w-100 mb-2">
+                                <i class="fas fa-plus"></i> Create New Event
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ url_for('organizer.manage_events') }}" class="btn btn-primary w-100 mb-2">
+                                <i class="fas fa-list"></i> Manage Events
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-info w-100 mb-2" onclick="exportData()">
+                                <i class="fas fa-download"></i> Export Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Events -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-calendar-check"></i> Recent Events</h5>
+                    <a href="{{ url_for('organizer.manage_events') }}" class="btn btn-sm btn-outline-primary">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if events %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Event Name</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Registrations</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for event in events %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ event.title }}</strong><br>
+                                            <small class="text-muted">{{ event.venue }}</small>
+                                        </td>
+                                        <td>
+                                            {{ event.start_date.strftime('%B %d, %Y') }}<br>
+                                            <small class="text-muted">{{ event.start_date.strftime('%I:%M %p') }}</small>
+                                        </td>
+                                        <td>
+                                            {% if event.status == 'approved' %}
+                                                <span class="badge bg-success">Approved</span>
+                                            {% elif event.status == 'pending' %}
+                                                <span class="badge bg-warning">Pending</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Rejected</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">{{ event.registrations }}</span>
+                                            {% if event.max_attendees %}
+                                                / {{ event.max_attendees }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ url_for('organizer.event_analytics', event_id=event.id) }}" 
+                                                   class="btn btn-outline-primary" title="Analytics">
+                                                    <i class="fas fa-chart-bar"></i>
+                                                </a>
+                                                {% if event.status == 'pending' %}
+                                                <button class="btn btn-outline-secondary" disabled title="Pending Approval">
+                                                    <i class="fas fa-clock"></i>
+                                                </button>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                            <h5>No events created yet</h5>
+                            <p class="text-muted">Start by creating your first event!</p>
+                            <a href="{{ url_for('organizer.create_event') }}" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Create Event
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function exportData() {
+    // Simple export functionality
+    alert('Export feature will be implemented in future updates!');
+}
+</script>
+{% endblock %}

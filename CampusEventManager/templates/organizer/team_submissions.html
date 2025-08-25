@@ -1,0 +1,148 @@
+
+{% extends "base.html" %}
+
+{% block title %}Team Submissions - {{ event.title }} - SMVEC Events{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-upload"></i> Team Submissions</h2>
+                    <p class="lead mb-0">{{ event.title }}</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('organizer.manage_events') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Events
+                    </a>
+                    {% if submissions and submissions|selectattr('submission.status', 'equalto', 'evaluated')|list|length > 0 %}
+                    <a href="{{ url_for('organizer.announce_results', event_id=event.id) }}" class="btn btn-success">
+                        <i class="fas fa-bullhorn"></i> Announce Results
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Info -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-info-circle"></i> Event Details</h5>
+                            <p><strong>Venue:</strong> {{ event.venue }}</p>
+                            <p><strong>Date:</strong> {{ event.start_date.strftime('%B %d, %Y') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-chart-bar"></i> Submission Statistics</h5>
+                            <p><strong>Total Submissions:</strong> {{ submissions|length }}</p>
+                            <p><strong>Evaluated:</strong> {{ submissions|selectattr('submission.status', 'equalto', 'evaluated')|list|length }}</p>
+                            <p><strong>Pending:</strong> {{ submissions|selectattr('submission.status', 'equalto', 'submitted')|list|length }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submissions List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-list"></i> Team Submissions</h5>
+                </div>
+                <div class="card-body">
+                    {% if submissions %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Team Name</th>
+                                        <th>Members</th>
+                                        <th>Submission</th>
+                                        <th>Submitted At</th>
+                                        <th>Status</th>
+                                        <th>Score</th>
+                                        <th>Rank</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in submissions %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ item.team.name }}</strong><br>
+                                            <small class="text-muted">Code: {{ item.team.team_code }}</small>
+                                        </td>
+                                        <td>
+                                            {% for member in item.team_members %}
+                                                <span class="badge bg-info me-1">{{ member.username }}</span>
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {% if item.submission.submission_type == 'link' %}
+                                                <a href="{{ item.submission.content }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-external-link-alt"></i> View Project
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted">{{ item.submission.submission_type }}</span>
+                                            {% endif %}
+                                            {% if item.submission.description %}
+                                                <br><small class="text-muted">{{ item.submission.description[:100] }}{% if item.submission.description|length > 100 %}...{% endif %}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ item.submission.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}</td>
+                                        <td>
+                                            {% if item.submission.status == 'submitted' %}
+                                                <span class="badge bg-warning">Pending Review</span>
+                                            {% elif item.submission.status == 'under_review' %}
+                                                <span class="badge bg-info">Under Review</span>
+                                            {% elif item.submission.status == 'evaluated' %}
+                                                <span class="badge bg-success">Evaluated</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item.submission.status == 'evaluated' %}
+                                                <strong>{{ item.submission.score }}/100</strong>
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item.submission.status == 'evaluated' and item.submission.rank %}
+                                                <span class="badge bg-primary">#{{ item.submission.rank }}</span>
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ url_for('organizer.evaluate_submission', submission_id=item.submission.id) }}" 
+                                                   class="btn btn-outline-primary" title="Evaluate">
+                                                    <i class="fas fa-star"></i> Evaluate
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                            <h5>No submissions yet</h5>
+                            <p class="text-muted">Teams haven't submitted their projects yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+
+{% block title %}Event Analytics - {{ event.title }} - SMVEC Events{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('organizer.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('organizer.manage_events') }}">Manage Events</a></li>
+                    <li class="breadcrumb-item active">Analytics</li>
+                </ol>
+            </nav>
+            <h2><i class="fas fa-chart-bar"></i> Event Analytics</h2>
+            <h4 class="text-muted">{{ event.title }}</h4>
+        </div>
+    </div>
+
+    <!-- Event Summary -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5>{{ event.title }}</h5>
+                            <p class="text-muted">{{ event.description }}</p>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p><i class="fas fa-map-marker-alt text-danger"></i> <strong>Venue:</strong> {{ event.venue }}</p>
+                                    <p><i class="fas fa-calendar text-primary"></i> <strong>Date:</strong> {{ event.start_date.strftime('%B %d, %Y') }}</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p><i class="fas fa-clock text-info"></i> <strong>Time:</strong> {{ event.start_date.strftime('%I:%M %p') }} - {{ event.end_date.strftime('%I:%M %p') }}</p>
+                                    <p><i class="fas fa-tag text-success"></i> <strong>Category:</strong> {{ event.category }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                {% if event.status == 'approved' %}
+                                    <span class="badge bg-success fs-6">Approved</span>
+                                {% elif event.status == 'pending' %}
+                                    <span class="badge bg-warning fs-6">Pending</span>
+                                {% else %}
+                                    <span class="badge bg-danger fs-6">Rejected</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h3 class="text-primary">{{ stats.total_registrations }}</h3>
+                    <p class="card-text">Total Registrations</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                    <h3 class="text-success">{{ stats.attended }}</h3>
+                    <p class="card-text">Attended</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-percentage fa-3x text-info mb-3"></i>
+                    <h3 class="text-info">{{ stats.attendance_rate }}%</h3>
+                    <p class="card-text">Attendance Rate</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-star fa-3x text-warning mb-3"></i>
+                    <h3 class="text-warning">{{ stats.avg_rating }}</h3>
+                    <p class="card-text">Average Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-pie"></i> Attendance Overview</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar"></i> Registration Timeline</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="registrationChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registrations List -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-list"></i> Registrations ({{ registrations|length }})</h5>
+                    <button class="btn btn-outline-primary btn-sm" onclick="exportRegistrations()">
+                        <i class="fas fa-download"></i> Export CSV
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% if registrations %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Registration Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reg in registrations %}
+                                    <tr>
+                                        <td>{{ reg.user.username }}</td>
+                                        <td>{{ reg.user.email }}</td>
+                                        <td>{{ reg.registration.registered_at.strftime('%B %d, %Y at %I:%M %p') }}</td>
+                                        <td>
+                                            {% if reg.registration.attended %}
+                                                <span class="badge bg-success">Attended</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Registered</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <form method="POST" 
+                                                  action="{{ url_for('organizer.mark_attendance', event_id=event.id, reg_id=reg.registration.id) }}" 
+                                                  class="d-inline">
+                                                <button type="submit" class="btn btn-sm {% if reg.registration.attended %}btn-outline-secondary{% else %}btn-outline-success{% endif %}">
+                                                    {% if reg.registration.attended %}
+                                                        <i class="fas fa-undo"></i> Mark Absent
+                                                    {% else %}
+                                                        <i class="fas fa-check"></i> Mark Present
+                                                    {% endif %}
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                            <h5>No Registrations Yet</h5>
+                            <p class="text-muted">No one has registered for this event yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Section -->
+    {% if feedback %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-comments"></i> Event Feedback ({{ feedback|length }})</h5>
+                </div>
+                <div class="card-body">
+                    {% for item in feedback %}
+                    <div class="border-bottom pb-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ item.user.username }}</strong>
+                                <div class="mt-1">
+                                    {% for i in range(5) %}
+                                        {% if i < item.feedback.rating %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-muted"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <small class="text-muted">{{ item.feedback.created_at.strftime('%B %d, %Y') }}</small>
+                        </div>
+                        <p class="mt-2 mb-0">{{ item.feedback.comment }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Attendance Pie Chart
+const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+new Chart(attendanceCtx, {
+    type: 'pie',
+    data: {
+        labels: ['Attended', 'Registered Only'],
+        datasets: [{
+            data: [{{ stats.attended }}, {{ stats.total_registrations - stats.attended }}],
+            backgroundColor: ['#28a745', '#6c757d'],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Registration Timeline Chart
+const registrationCtx = document.getElementById('registrationChart').getContext('2d');
+const registrationData = {
+    labels: [{% for reg in registrations %}'{{ reg.registration.registered_at.strftime("%m/%d") }}'{% if not loop.last %},{% endif %}{% endfor %}],
+    datasets: [{
+        label: 'Registrations',
+        data: [{% for i in range(registrations|length) %}{{ i + 1 }}{% if not loop.last %},{% endif %}{% endfor %}],
+        borderColor: '#007bff',
+        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+        tension: 0.4
+    }]
+};
+
+new Chart(registrationCtx, {
+    type: 'line',
+    data: registrationData,
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Total Registrations'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Date'
+                }
+            }
+        }
+    }
+});
+
+function exportRegistrations() {
+    // Simple CSV export
+    let csv = 'Name,Email,Registration Date,Status\n';
+    {% for reg in registrations %}
+    csv += '"{{ reg.user.username }}","{{ reg.user.email }}","{{ reg.registration.registered_at.strftime("%Y-%m-%d %H:%M") }}","{% if reg.registration.attended %}Attended{% else %}Registered{% endif %}"\n';
+    {% endfor %}
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '{{ event.title }}_registrations.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+</script>
+{% endblock %}

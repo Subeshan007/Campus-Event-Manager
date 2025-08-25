@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-primary mb-4">
+                    Campus Events Management System
+                </h1>
+                <p class="lead mb-4">
+                    Discover, organize, and participate in exciting campus events at Sri Manakula Vinayagar Engineering College. 
+                    Connect with your community and make the most of your college experience.
+                </p>
+                
+                {% if not session.user_id %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card text-center h-100 login-card">
+                                <div class="card-body">
+                                    <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+                                    <h5 class="card-title">Students</h5>
+                                    <p class="card-text">Discover and register for campus events</p>
+                                    <a href="{{ url_for('auth.student_login') }}" class="btn btn-primary">Student Login</a>
+                                    <div class="mt-2">
+                                        <small>
+                                            <a href="{{ url_for('auth.register') }}" class="text-decoration-none">
+                                                Don't have an account? Register here
+                                            </a>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card text-center h-100 login-card">
+                                <div class="card-body">
+                                    <i class="fas fa-users fa-3x text-success mb-3"></i>
+                                    <h5 class="card-title">Organizers</h5>
+                                    <p class="card-text">Create and manage campus events</p>
+                                    <a href="{{ url_for('auth.organizer_login') }}" class="btn btn-success">Organizer Login</a>
+                                    <div class="mt-2">
+                                        <small>
+                                            <a href="{{ url_for('auth.register') }}" class="text-decoration-none">
+                                                Register as Organizer
+                                            </a>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6 mx-auto">
+                            <div class="card text-center login-card">
+                                <div class="card-body">
+                                    <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                                    <h5 class="card-title">Administrators</h5>
+                                    <p class="card-text">Manage users and approve events</p>
+                                    <a href="{{ url_for('auth.admin_login') }}" class="btn btn-warning">Admin Login</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center">
+                        {% if session.user_role == 'student' %}
+                            <a href="{{ url_for('student.dashboard') }}" class="btn btn-primary btn-lg">
+                                Go to Student Dashboard
+                            </a>
+                        {% elif session.user_role == 'organizer' %}
+                            <a href="{{ url_for('organizer.dashboard') }}" class="btn btn-success btn-lg">
+                                Go to Organizer Dashboard
+                            </a>
+                        {% elif session.user_role == 'admin' %}
+                            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-warning btn-lg">
+                                Go to Admin Dashboard
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <i class="fas fa-calendar-check fa-10x text-primary opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="display-5 fw-bold">Platform Features</h2>
+            <p class="lead">Everything you need for campus event management</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-search fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Event Discovery</h5>
+                    <p class="card-text">Search and filter events by category, date, and interests</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-ticket-alt fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Easy Registration</h5>
+                    <p class="card-text">One-click registration with automated confirmations</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Analytics</h5>
+                    <p class="card-text">Comprehensive analytics and attendance tracking</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-bell fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Notifications</h5>
+                    <p class="card-text">Automated reminders and event updates</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-qrcode fa-3x text-dark mb-3"></i>
+                    <h5 class="card-title">QR Check-in</h5>
+                    <p class="card-text">Quick and secure event check-in system</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-star fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Feedback System</h5>
+                    <p class="card-text">Rate and review events for continuous improvement</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

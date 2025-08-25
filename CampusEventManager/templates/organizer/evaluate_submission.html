@@ -1,0 +1,91 @@
+
+{% extends "base.html" %}
+
+{% block title %}Evaluate Submission - SMVEC Events{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-star"></i> Evaluate Team Submission</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Team Information -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-users"></i> Team Information</h5>
+                            <p><strong>Team Name:</strong> {{ team.name }}</p>
+                            <p><strong>Team Code:</strong> {{ team.team_code }}</p>
+                            <p><strong>Event:</strong> {{ event.title }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-user-friends"></i> Team Members</h5>
+                            {% for member in team_members %}
+                                <span class="badge bg-info me-1 mb-1">{{ member.username }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Submission Details -->
+                    <div class="mb-4">
+                        <h5><i class="fas fa-upload"></i> Submission Details</h5>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <p><strong>Submitted:</strong> {{ submission.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                                {% if submission.submission_type == 'link' %}
+                                    <p><strong>Project Link:</strong> 
+                                        <a href="{{ submission.content }}" target="_blank" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-external-link-alt"></i> View Project
+                                        </a>
+                                    </p>
+                                {% endif %}
+                                {% if submission.description %}
+                                    <p><strong>Description:</strong></p>
+                                    <p class="text-muted">{{ submission.description }}</p>
+                                {% endif %}
+                                <p><strong>Current Status:</strong> 
+                                    {% if submission.status == 'submitted' %}
+                                        <span class="badge bg-warning">Pending Review</span>
+                                    {% elif submission.status == 'evaluated' %}
+                                        <span class="badge bg-success">Evaluated (Score: {{ submission.score }})</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evaluation Form -->
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="score" class="form-label">Score (0-100)</label>
+                            <input type="number" class="form-control" id="score" name="score" 
+                                   min="0" max="100" step="0.1" 
+                                   value="{{ submission.score if submission.status == 'evaluated' else '' }}" required>
+                            <div class="form-text">Enter a score between 0 and 100</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="feedback" class="form-label">Evaluation Feedback (Optional)</label>
+                            <textarea class="form-control" id="feedback" name="feedback" rows="4" 
+                                      placeholder="Provide feedback on the team's submission...">{{ submission.get('feedback', '') }}</textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('organizer.team_submissions', event_id=event.id) }}" 
+                               class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Submissions
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check"></i> 
+                                {% if submission.status == 'evaluated' %}Update Evaluation{% else %}Submit Evaluation{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

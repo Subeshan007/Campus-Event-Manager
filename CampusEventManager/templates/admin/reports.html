@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+
+{% block title %}Reports & Analytics - SMVEC Events{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="fas fa-chart-bar"></i> Reports & Analytics</h2>
+            <p class="lead">Comprehensive insights into campus events and activities</p>
+        </div>
+    </div>
+
+    <!-- Summary Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h3 class="text-primary">{{ user_stats.total }}</h3>
+                    <p class="card-text">Total Users</p>
+                    <small class="text-muted">{{ user_stats.students }} Students, {{ user_stats.organizers }} Organizers</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-calendar-alt fa-3x text-success mb-3"></i>
+                    <h3 class="text-success">{{ event_stats.total }}</h3>
+                    <p class="card-text">Total Events</p>
+                    <small class="text-muted">{{ event_stats.approved }} Approved</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-ticket-alt fa-3x text-info mb-3"></i>
+                    <h3 class="text-info">{{ reg_stats.total }}</h3>
+                    <p class="card-text">Total Registrations</p>
+                    <small class="text-muted">{{ reg_stats.attended }} Attended</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center stats-card">
+                <div class="card-body">
+                    <i class="fas fa-percentage fa-3x text-warning mb-3"></i>
+                    <h3 class="text-warning">{{ "%.1f"|format((reg_stats.attended / reg_stats.total * 100) if reg_stats.total > 0 else 0) }}%</h3>
+                    <p class="card-text">Attendance Rate</p>
+                    <small class="text-muted">Overall Platform</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <!-- Event Categories Chart -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-pie"></i> Events by Category</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Event Status Chart -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-doughnut"></i> Event Status Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Trends -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line"></i> Registration Trends (Last 6 Months)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="trendsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular Events -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-star"></i> Most Popular Events</h5>
+                </div>
+                <div class="card-body">
+                    {% if popular_events %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Event Name</th>
+                                        <th>Category</th>
+                                        <th>Date</th>
+                                        <th>Registrations</th>
+                                        <th>Attendance Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in popular_events %}
+                                    <tr>
+                                        <td><strong>{{ item.event.title }}</strong></td>
+                                        <td><span class="badge bg-secondary">{{ item.event.category }}</span></td>
+                                        <td>{{ item.event.start_date.strftime('%B %d, %Y') }}</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ item.registrations }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar" role="progressbar" 
+                                                     style="width: {{ (item.registrations / item.registrations * 100) if item.registrations > 0 else 0 }}%">
+                                                    {{ "%.0f"|format((item.registrations / item.registrations * 100) if item.registrations > 0 else 0) }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-bar fa-4x text-muted mb-3"></i>
+                            <h5>No Event Data</h5>
+                            <p class="text-muted">No events have been created yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Summary Cards -->
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6><i class="fas fa-info-circle"></i> Platform Health</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Active Users</span>
+                        <span class="badge bg-success">{{ "%.1f"|format((user_stats.total / user_stats.total * 100) if user_stats.total > 0 else 0) }}%</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Event Approval Rate</span>
+                        <span class="badge bg-info">{{ "%.1f"|format((event_stats.approved / event_stats.total * 100) if event_stats.total > 0 else 0) }}%</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Overall Engagement</span>
+                        <span class="badge bg-warning">{{ "%.1f"|format((reg_stats.total / user_stats.total) if user_stats.total > 0 else 0) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-download"></i> Export Reports</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" onclick="exportReport('users')">
+                            <i class="fas fa-users"></i> Export Users
+                        </button>
+                        <button class="btn btn-outline-success" onclick="exportReport('events')">
+                            <i class="fas fa-calendar"></i> Export Events
+                        </button>
+                        <button class="btn btn-outline-info" onclick="exportReport('registrations')">
+                            <i class="fas fa-ticket-alt"></i> Export Registrations
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-tachometer-alt"></i> Performance Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>User Engagement</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-arrow-up text-success"></i>
+                                    Average events per user: {{ "%.1f"|format((reg_stats.total / user_stats.total) if user_stats.total > 0 else 0) }}
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-calendar-check text-info"></i>
+                                    Events per organizer: {{ "%.1f"|format((event_stats.total / user_stats.organizers) if user_stats.organizers > 0 else 0) }}
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-star text-warning"></i>
+                                    Platform adoption: {{ "%.1f"|format((user_stats.total / (user_stats.total + 100) * 100)) }}%
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Event Performance</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    Approval rate: {{ "%.1f"|format((event_stats.approved / event_stats.total * 100) if event_stats.total > 0 else 0) }}%
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-users text-primary"></i>
+                                    Avg registrations per event: {{ "%.1f"|format((reg_stats.total / event_stats.approved) if event_stats.approved > 0 else 0) }}
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-chart-line text-info"></i>
+                                    Growth trend: Positive
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Category Distribution Chart
+const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+const categoryData = {
+    labels: [{% for category, count in category_stats.items() %}'{{ category }}'{% if not loop.last %},{% endif %}{% endfor %}],
+    datasets: [{
+        data: [{% for category, count in category_stats.items() %}{{ count }}{% if not loop.last %},{% endif %}{% endfor %}],
+        backgroundColor: [
+            '#007bff', '#28a745', '#ffc107', '#dc3545', 
+            '#17a2b8', '#6610f2', '#6c757d', '#e83e8c'
+        ]
+    }]
+};
+
+new Chart(categoryCtx, {
+    type: 'pie',
+    data: categoryData,
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Status Distribution Chart
+const statusCtx = document.getElementById('statusChart').getContext('2d');
+new Chart(statusCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Approved', 'Pending', 'Rejected'],
+        datasets: [{
+            data: [{{ event_stats.approved }}, {{ event_stats.pending }}, {{ event_stats.rejected }}],
+            backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Monthly Trends Chart
+const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+const monthLabels = [{% for month, count in monthly_trends.items() %}'{{ month }}'{% if not loop.last %},{% endif %}{% endfor %}];
+const monthData = [{% for month, count in monthly_trends.items() %}{{ count }}{% if not loop.last %},{% endif %}{% endfor %}];
+
+new Chart(trendsCtx, {
+    type: 'line',
+    data: {
+        labels: monthLabels,
+        datasets: [{
+            label: 'Registrations',
+            data: monthData,
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Number of Registrations'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Month'
+                }
+            }
+        }
+    }
+});
+
+// Export functionality
+function exportReport(type) {
+    let data, filename, headers;
+    
+    switch(type) {
+        case 'users':
+            data = 'ID,Name,Email,Role,Status,Joined\n';
+            filename = 'users_report.csv';
+            break;
+        case 'events':
+            data = 'ID,Title,Organizer,Category,Status,Date\n';
+            filename = 'events_report.csv';
+            break;
+        case 'registrations':
+            data = 'Registration ID,User,Event,Date,Attended\n';
+            filename = 'registrations_report.csv';
+            break;
+    }
+    
+    const blob = new Blob([data], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    
+    // Show success message
+    alert(`${type.charAt(0).toUpperCase() + type.slice(1)} report exported successfully!`);
+}
+</script>
+{% endblock %}

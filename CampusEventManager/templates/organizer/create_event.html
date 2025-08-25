@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}Create Event - SMVEC Events{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="fas fa-plus"></i> Create New Event</h2>
+            <p class="lead">Fill in the details to create your event</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-edit"></i> Event Details</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="title" class="form-label">Event Title *</label>
+                                <input type="text" class="form-control" id="title" name="title" required
+                                       placeholder="Enter event title">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Event Description *</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required
+                                      placeholder="Describe your event in detail..."></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="venue" class="form-label">Venue *</label>
+                                <input type="text" class="form-control" id="venue" name="venue" required
+                                       placeholder="Event venue/location">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="category" class="form-label">Category *</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Technical">Technical</option>
+                                    <option value="Cultural">Cultural</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Academic">Academic</option>
+                                    <option value="Workshop">Workshop</option>
+                                    <option value="Seminar">Seminar</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="start_date" class="form-label">Start Date & Time *</label>
+                                <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="end_date" class="form-label">End Date & Time *</label>
+                                <input type="datetime-local" class="form-control" id="end_date" name="end_date" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="max_attendees" class="form-label">Maximum Attendees</label>
+                                <input type="number" class="form-control" id="max_attendees" name="max_attendees" 
+                                       min="1" placeholder="Leave blank for unlimited">
+                                <div class="form-text">Leave empty for unlimited capacity</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="image" class="form-label">Event Image</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                <div class="form-text">Upload an image for your event (optional)</div>
+                            </div>
+                        </div>
+
+                        <!-- Team Participation Options -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6><i class="fas fa-users"></i> Participation Type</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" id="individual" name="participation_type" 
+                                           value="individual" checked onchange="toggleTeamOptions()">
+                                    <label class="form-check-label" for="individual">
+                                        Individual Participation
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" id="team" name="participation_type" 
+                                           value="team" onchange="toggleTeamOptions()">
+                                    <label class="form-check-label" for="team">
+                                        Team-based Event
+                                    </label>
+                                </div>
+                                
+                                <div id="team_options" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="team_size_min" class="form-label">Minimum Team Size</label>
+                                            <input type="number" class="form-control" id="team_size_min" name="team_size_min" 
+                                                   min="1" value="2">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="team_size_max" class="form-label">Maximum Team Size</label>
+                                            <input type="number" class="form-control" id="team_size_max" name="team_size_max" 
+                                                   min="1" value="4">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Options -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6><i class="fas fa-money-bill-wave"></i> Payment Options</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="is_paid" name="is_paid" 
+                                           onchange="togglePriceField()">
+                                    <label class="form-check-label" for="is_paid">
+                                        This is a paid event
+                                    </label>
+                                </div>
+                                
+                                <div class="mb-3" id="price_field" style="display: none;">
+                                    <label for="price" class="form-label">Event Price (₹)</label>
+                                    <input type="number" class="form-control" id="price" name="price" 
+                                           min="0" step="0.01" placeholder="0.00">
+                                </div>
+                            </div>
+                        </div>v>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('organizer.dashboard') }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Create Event
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Guidelines Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-lightbulb"></i> Event Guidelines</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i>
+                            Provide clear and detailed descriptions
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i>
+                            Set realistic capacity limits
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i>
+                            Allow sufficient time for registration
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i>
+                            Upload high-quality event images
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i>
+                            Events require admin approval
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Preview Card -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6><i class="fas fa-eye"></i> Event Preview</h6>
+                </div>
+                <div class="card-body">
+                    <div id="event-preview">
+                        <h6 class="text-muted">Preview will appear as you fill the form</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function toggleTeamOptions() {
+    const teamRadio = document.getElementById('team');
+    const teamOptions = document.getElementById('team_options');
+    
+    if (teamRadio.checked) {
+        teamOptions.style.display = 'block';
+    } else {
+        teamOptions.style.display = 'none';
+    }
+}
+
+function togglePriceField() {
+    const isPaidCheckbox = document.getElementById('is_paid');
+    const priceField = document.getElementById('price_field');
+    const priceInput = document.getElementById('price');
+    
+    if (isPaidCheckbox.checked) {
+        priceField.style.display = 'block';
+        priceInput.required = true;
+    } else {
+        priceField.style.display = 'none';
+        priceInput.required = false;
+        priceInput.value = '';
+    }
+}
+
+// Set minimum date to today
+document.addEventListener('DOMContentLoaded', function() {
+    const now = new Date();
+    const minDateTime = now.toISOString().slice(0, 16);
+    document.getElementById('start_date').min = minDateTime;
+    document.getElementById('end_date').min = minDateTime;
+    
+    // Update end date minimum when start date changes
+    document.getElementById('start_date').addEventListener('change', function() {
+        document.getElementById('end_date').min = this.value;
+    });
+});
+
+// Live preview functionality
+function updatePreview() {
+    const title = document.getElementById('title').value || 'Event Title';
+    const venue = document.getElementById('venue').value || 'Venue';
+    const category = document.getElementById('category').value || 'Category';
+    const startDate = document.getElementById('start_date').value;
+    const isPaid = document.getElementById('is_paid').checked;
+    const price = document.getElementById('price').value;
+    
+    let previewHtml = `
+        <h6>${title}</h6>
+        <p class="mb-1"><i class="fas fa-map-marker-alt text-danger"></i> ${venue}</p>
+        <p class="mb-1"><i class="fas fa-tag text-info"></i> ${category}</p>
+    `;
+    
+    if (startDate) {
+        const date = new Date(startDate);
+        previewHtml += `<p class="mb-1"><i class="fas fa-calendar text-primary"></i> ${date.toLocaleDateString()}</p>`;
+    }
+    
+    if (isPaid && price) {
+        previewHtml += `<p class="mb-1"><i class="fas fa-rupee-sign text-warning"></i> ₹${price}</p>`;
+    } else if (!isPaid) {
+        previewHtml += `<p class="mb-1"><i class="fas fa-gift text-success"></i> Free</p>`;
+    }
+    
+    document.getElementById('event-preview').innerHTML = previewHtml;
+}
+
+// Add event listeners for live preview
+document.addEventListener('DOMContentLoaded', function() {
+    const formInputs = ['title', 'venue', 'category', 'start_date', 'is_paid', 'price'];
+    formInputs.forEach(inputId => {
+        const element = document.getElementById(inputId);
+        if (element) {
+            element.addEventListener('input', updatePreview);
+            element.addEventListener('change', updatePreview);
+        }
+    });
+    
+    updatePreview(); // Initial preview
+});
+</script>
+{% endblock %}

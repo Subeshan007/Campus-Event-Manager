@@ -1,0 +1,86 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Teams{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-users"></i> My Teams</h2>
+                <a href="{{ url_for('team.join_team') }}" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Join Team
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if user_teams %}
+        <div class="row">
+            {% for item in user_teams %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ item.team.name }}</h5>
+                        {% if item.is_leader %}
+                            <span class="badge bg-warning">Leader</span>
+                        {% else %}
+                            <span class="badge bg-info">Member</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title">{{ item.event.title }}</h6>
+                        <p class="card-text">
+                            <strong>Event Date:</strong> {{ item.event.start_date.strftime('%B %d, %Y') if item.event.start_date else 'TBD' }}<br>
+                            <strong>Team Code:</strong> <code>{{ item.team.team_code }}</code><br>
+                            <strong>Members:</strong> {{ item.members|length }}/{{ item.event.team_size_max or 4 }}
+                        </p>
+                        
+                        <div class="mb-3">
+                            <h6>Team Members:</h6>
+                            <ul class="list-unstyled">
+                                {% for member in item.members %}
+                                <li>
+                                    <i class="fas fa-user"></i> {{ member.full_name or member.username }}
+                                    {% if member.id == item.team.leader_id %}
+                                        <span class="badge bg-warning ms-1">Leader</span>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            {% if item.event.is_competition %}
+                                <a href="{{ url_for('team.submit_project', event_id=item.event.id) }}" 
+                                   class="btn btn-success">
+                                    <i class="fas fa-upload"></i> Submit Project
+                                </a>
+                                <a href="{{ url_for('team.leaderboard', event_id=item.event.id) }}" 
+                                   class="btn btn-info">
+                                    <i class="fas fa-trophy"></i> Leaderboard
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                    <h4>No Teams Yet</h4>
+                    <p class="text-muted">You haven't joined any teams. Look for competitions that allow team registration.</p>
+                    <a href="{{ url_for('student.events') }}" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Browse Events
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

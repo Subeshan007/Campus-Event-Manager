@@ -1,0 +1,126 @@
+
+{% extends "base.html" %}
+
+{% block title %}Announce Results - SMVEC Events{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-trophy"></i> Announce Competition Results</h2>
+                    <p class="lead mb-0">{{ event.title }}</p>
+                </div>
+                <a href="{{ url_for('organizer.team_submissions', event_id=event.id) }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Submissions
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Preview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-medal"></i> Final Rankings</h5>
+                </div>
+                <div class="card-body">
+                    {% if submissions %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Team Name</th>
+                                        <th>Score</th>
+                                        <th>Prize</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in submissions %}
+                                    <tr {% if item.submission.rank <= 3 %}class="table-warning"{% endif %}>
+                                        <td>
+                                            {% if item.submission.rank == 1 %}
+                                                <i class="fas fa-trophy text-warning"></i> #1
+                                            {% elif item.submission.rank == 2 %}
+                                                <i class="fas fa-medal text-secondary"></i> #2
+                                            {% elif item.submission.rank == 3 %}
+                                                <i class="fas fa-award text-warning"></i> #3
+                                            {% else %}
+                                                #{{ item.submission.rank }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <strong>{{ item.team.name }}</strong><br>
+                                            <small class="text-muted">Team Code: {{ item.team.team_code }}</small>
+                                        </td>
+                                        <td>
+                                            <strong>{{ item.submission.score }}/100</strong>
+                                        </td>
+                                        <td>
+                                            {% if item.submission.rank == 1 %}
+                                                <span class="badge bg-warning">1st Place</span>
+                                            {% elif item.submission.rank == 2 %}
+                                                <span class="badge bg-secondary">2nd Place</span>
+                                            {% elif item.submission.rank == 3 %}
+                                                <span class="badge bg-info">3rd Place</span>
+                                            {% else %}
+                                                <span class="badge bg-light text-dark">Participant</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                            <h5>No evaluated submissions</h5>
+                            <p class="text-muted">You need to evaluate submissions before announcing results.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcement Form -->
+    {% if submissions %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-bullhorn"></i> Announce Results</h5>
+                </div>
+                <div class="card-body">
+                    {% if event.get('results_announced', False) %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            Results for this competition have already been announced on 
+                            {{ event.results_announcement_date.strftime('%B %d, %Y at %I:%M %p') }}.
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Important:</strong> Once you announce the results, they will be visible to all participants and cannot be undone.
+                        </div>
+                        
+                        <form method="POST">
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success btn-lg" 
+                                        onclick="return confirm('Are you sure you want to announce these results? This action cannot be undone.')">
+                                    <i class="fas fa-bullhorn"></i> Announce Results to Participants
+                                </button>
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

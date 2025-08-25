@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Events - SMVEC Events{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2><i class="fas fa-calendar-alt"></i> Browse Events</h2>
+            <p class="lead">Discover exciting events happening on campus</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-filter"></i> Filter Events</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="search" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                   value="{{ current_filters.search }}" placeholder="Search events...">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">All Categories</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat }}" {% if current_filters.category == cat %}selected{% endif %}>
+                                    {{ cat }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="date" class="form-label">Date Filter</label>
+                            <select class="form-select" id="date" name="date">
+                                <option value="">All Dates</option>
+                                <option value="today" {% if current_filters.date == 'today' %}selected{% endif %}>Today</option>
+                                <option value="this_week" {% if current_filters.date == 'this_week' %}selected{% endif %}>This Week</option>
+                                <option value="this_month" {% if current_filters.date == 'this_month' %}selected{% endif %}>This Month</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Filter
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="row">
+        {% if events %}
+            {% for event in events %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card event-card h-100">
+                    {% if event.image_path %}
+                    <img src="{{ url_for('static', filename=event.image_path) }}" class="card-img-top" alt="{{ event.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <p class="card-text">{{ event.description[:100] }}{% if event.description|length > 100 %}...{% endif %}</p>
+
+                        <div class="event-details">
+                            <p class="mb-1">
+                                <i class="fas fa-map-marker-alt text-danger"></i>
+                                <strong>Venue:</strong> {{ event.venue }}
+                            </p>
+                            <p class="mb-1">
+                                <i class="fas fa-clock text-primary"></i>
+                                <strong>Date:</strong> {{ event.start_date.strftime('%B %d, %Y') }}
+                            </p>
+                            <p class="mb-1">
+                                <i class="fas fa-time text-info"></i>
+                                <strong>Time:</strong> {{ event.start_date.strftime('%I:%M %p') }}
+                            </p>
+                            <p class="mb-2">
+                                <i class="fas fa-tag text-success"></i>
+                                <span class="badge bg-secondary">{{ event.category }}</span>
+                                {% if event.get('is_competition', False) %}
+                                    <span class="badge bg-info ms-1">
+                                        <i class="fas fa-users"></i> Team Event
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-primary ms-1">
+                                        <i class="fas fa-user"></i> Individual
+                                    </span>
+                                {% endif %}
+                            </p>
+
+                            {% if event.is_paid %}
+                            <p class="mb-2">
+                                <i class="fas fa-rupee-sign text-warning"></i>
+                                <strong>Price:</strong> ₹{{ "%.2f"|format(event.price) }}
+                            </p>
+                            {% else %}
+                            <p class="mb-2">
+                                <i class="fas fa-gift text-success"></i>
+                                <span class="badge bg-success">Free Event</span>
+                            </p>
+                            {% endif %}
+
+                            {% if event.max_attendees %}
+                            <div class="progress mb-2">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ (event.current_attendees / event.max_attendees * 100) }}%">
+                                    {{ event.current_attendees }}/{{ event.max_attendees }}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ url_for('student.event_detail', event_id=event.id) }}" 
+                           class="btn btn-primary w-100">
+                            <i class="fas fa-info-circle"></i> View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-times fa-5x text-muted mb-3"></i>
+                    <h5>No events found</h5>
+                    <p class="text-muted">Try adjusting your filters or check back later for new events!</p>
+                    <a href="{{ url_for('student.events') }}" class="btn btn-primary">
+                        <i class="fas fa-refresh"></i> Clear Filters
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

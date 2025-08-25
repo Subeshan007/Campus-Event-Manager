@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Register - SMVEC Events{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4><i class="fas fa-user-plus"></i> Register for SMVEC Events</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Firebase Google Sign-in Button -->
+                    <div class="text-center mb-4">
+                        <button id="google-signin-btn" class="btn btn-danger btn-lg w-100 mb-3">
+                            <i class="fab fa-google"></i> Sign in with Google
+                        </button>
+                        <hr>
+                        <p class="text-muted">Or register manually below</p>
+                    </div>
+
+                    <form method="POST" id="registration-form">
+                        <!-- Role Selection -->
+                        <div class="mb-3">
+                            <label for="role" class="form-label">I am registering as:</label>
+                            <select class="form-control" id="role" name="role" required onchange="toggleFields()">
+                                <option value="">Select your role</option>
+                                <option value="student">Student</option>
+                                <option value="organizer">Event Organizer</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                        </div>
+
+                        <!-- Common Fields -->
+                        <div class="mb-3">
+                            <label for="full_name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="full_name" name="full_name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+
+                        <!-- Student-specific fields -->
+                        <div id="student-fields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="register_number" class="form-label">Register Number</label>
+                                <input type="text" class="form-control" id="register_number" name="register_number" placeholder="e.g., 20CS001">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="department" class="form-label">Department</label>
+                                <select class="form-control" id="department" name="department">
+                                    <option value="">Select Department</option>
+                                    <option value="Computer Science Engineering">Computer Science Engineering</option>
+                                    <option value="Information Technology">Information Technology</option>
+                                    <option value="Electronics and Communication Engineering">Electronics and Communication Engineering</option>
+                                    <option value="Electrical and Electronics Engineering">Electrical and Electronics Engineering</option>
+                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                    <option value="Civil Engineering">Civil Engineering</option>
+                                    <option value="Chemical Engineering">Chemical Engineering</option>
+                                    <option value="Biomedical Engineering">Biomedical Engineering</option>
+                                    <option value="Aerospace Engineering">Aerospace Engineering</option>
+                                    <option value="Marine Engineering">Marine Engineering</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Organizer-specific fields -->
+                        <div id="organizer-fields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="organization" class="form-label">Department/Organization</label>
+                                <input type="text" class="form-control" id="organization" name="organization" placeholder="e.g., Student Activities, Sports Club">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <p>Already have an account? 
+                            <a href="{{ url_for('index') }}" class="text-decoration-none">
+                                Go to Login
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase Configuration and JavaScript -->
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js';
+
+    const firebaseConfig = {
+        apiKey: "{{ firebase_api_key }}",
+        authDomain: "{{ firebase_project_id }}.firebaseapp.com",
+        projectId: "{{ firebase_project_id }}",
+        storageBucket: "{{ firebase_project_id }}.firebasestorage.app",
+        appId: "{{ firebase_app_id }}"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    document.getElementById('google-signin-btn').addEventListener('click', async () => {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            
+            // Auto-fill form with Google account data
+            document.getElementById('full_name').value = user.displayName || '';
+            document.getElementById('email').value = user.email || '';
+            
+            // Show success message
+            alert('Google sign-in successful! Please select your role and complete the registration.');
+        } catch (error) {
+            console.error('Google sign-in error:', error);
+            alert('Google sign-in failed. Please try again or register manually.');
+        }
+    });
+</script>
+
+<script>
+function toggleFields() {
+    const role = document.getElementById('role').value;
+    const studentFields = document.getElementById('student-fields');
+    const organizerFields = document.getElementById('organizer-fields');
+    
+    // Hide all role-specific fields
+    studentFields.style.display = 'none';
+    organizerFields.style.display = 'none';
+    
+    // Show relevant fields based on role
+    if (role === 'student') {
+        studentFields.style.display = 'block';
+        document.getElementById('register_number').required = true;
+        document.getElementById('department').required = true;
+    } else if (role === 'organizer') {
+        organizerFields.style.display = 'block';
+        document.getElementById('organization').required = true;
+    }
+}
+</script>
+{% endblock %}

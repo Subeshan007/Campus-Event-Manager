@@ -1,0 +1,242 @@
+{
+  "users": {
+    "admin": {
+      "id": "admin",
+      "username": "admin",
+      "email": "admin@smvec.ac.in",
+      "password_hash": "scrypt:32768:8:1$m7CjGjKoQF5pjS2M$8c0ae6d9c0ef1e5c3b9f8d6e7a4b5c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0",
+      "role": "admin",
+      "created_at": "2025-08-22 15:46:36.445657",
+      "is_active": true,
+      "full_name": "Administrator",
+      "register_number": null,
+      "department": null
+    },
+    "03b6d2c3-3632-43fb-82ae-87b85329f273": {
+      "id": "03b6d2c3-3632-43fb-82ae-87b85329f273",
+      "username": "Subeshan Cobalakirouchenin",
+      "email": "subeshan2005@gmail.com",
+      "password_hash": "pbkdf2:sha256:600000$myMmT1T8AaSNS2j7$f8510f083288de2f3d1b4a1ec8f21d6ddcb0f9780cdb5e3777e2a1dba1494e45",
+      "role": "student",
+      "created_at": "2025-08-22 15:50:36.651654",
+      "is_active": true,
+      "full_name": "Subeshan Cobalakirouchenin",
+      "register_number": "23UIT149",
+      "department": "Information Technology"
+    },
+    "d1f95189-fe36-42e2-aad3-60e0aabd9fa1": {
+      "id": "d1f95189-fe36-42e2-aad3-60e0aabd9fa1",
+      "username": "Vishal",
+      "email": "rvgming4200@gmail.com",
+      "password_hash": "pbkdf2:sha256:600000$1lRD5lwo2T5DEl1f$1f2f2be4e21ea214e73dc3b56b619a41a49d7f23054d6e9cb3c8954dbfce61cc",
+      "role": "admin",
+      "created_at": "2025-08-22 15:54:31.869894",
+      "is_active": true,
+      "full_name": "Vishal",
+      "register_number": null,
+      "department": null
+    },
+    "45cd0005-8aba-4e5b-b115-c29f3ed82934": {
+      "id": "45cd0005-8aba-4e5b-b115-c29f3ed82934",
+      "username": "Priyan",
+      "email": "btechit230086@smvec.ac.in",
+      "password_hash": "pbkdf2:sha256:600000$Vim0YnS1cdQhdlw6$2c469a0fffe91b3d78e3e375923f7086b1f91b79192efdb12568c05154492bab",
+      "role": "organizer",
+      "created_at": "2025-08-22 15:55:51.026876",
+      "is_active": true,
+      "full_name": "Priyan",
+      "register_number": null,
+      "department": null,
+      "organization": "Hackathon"
+    },
+    "dd1dbb93-a6af-4cf7-b8ba-bdce24f7117a": {
+      "id": "dd1dbb93-a6af-4cf7-b8ba-bdce24f7117a",
+      "username": "Sathish",
+      "email": "cpriyan2009@gmail.com",
+      "password_hash": "pbkdf2:sha256:600000$DAafVZ1mtIDCCuVV$03148c5ed6b9b0afa798b0613fdbea32e5c1dce0f64e8f1fbd2e35c572061fbf",
+      "role": "student",
+      "created_at": "2025-08-24 14:18:14.076979",
+      "is_active": true,
+      "full_name": "Sathish",
+      "register_number": "23UIT140",
+      "department": "Information Technology"
+    }
+  },
+  "events": {
+    "fdd9d100-17a0-42f8-b770-ad1de8e166ec": {
+      "id": "fdd9d100-17a0-42f8-b770-ad1de8e166ec",
+      "title": "Hackathon",
+      "description": "A 48 hours online hackathon",
+      "organizer_id": "45cd0005-8aba-4e5b-b115-c29f3ed82934",
+      "venue": "Online",
+      "start_date": "2025-08-24 20:24:00",
+      "end_date": "2025-08-31 20:24:00",
+      "category": "Technical",
+      "max_attendees": "",
+      "current_attendees": 1,
+      "status": "approved",
+      "created_at": "2025-08-22 20:24:53.310973",
+      "image_path": "uploads/fdd9d100-17a0-42f8-b770-ad1de8e166ec_pho.jpg",
+      "is_paid": true,
+      "price": 120.0
+    },
+    "78c5315c-af2b-483a-a7da-beb8ed6debdb": {
+      "id": "78c5315c-af2b-483a-a7da-beb8ed6debdb",
+      "title": "AI Agents Workshop",
+      "description": "A 2 days Workshop",
+      "organizer_id": "45cd0005-8aba-4e5b-b115-c29f3ed82934",
+      "venue": "Chennai",
+      "start_date": "2025-08-25 09:15:00",
+      "end_date": "2025-08-31 09:15:00",
+      "category": "Workshop",
+      "max_attendees": "",
+      "current_attendees": 0,
+      "status": "approved",
+      "created_at": "2025-08-24 09:16:36.997080",
+      "image_path": "uploads/78c5315c-af2b-483a-a7da-beb8ed6debdb_harley-davidson-3840x2160-18430.jpg",
+      "is_paid": true,
+      "price": 200.0
+    },
+    "ddc9f9ee-cc38-47f5-8d62-cf59f276c1d9": {
+      "id": "ddc9f9ee-cc38-47f5-8d62-cf59f276c1d9",
+      "title": "Codeathon",
+      "description": "A 48 hours coding challenge",
+      "organizer_id": "45cd0005-8aba-4e5b-b115-c29f3ed82934",
+      "venue": "Chennai",
+      "start_date": "2025-08-25 00:00:00",
+      "end_date": "2025-08-31 00:00:00",
+      "category": "Technical",
+      "max_attendees": "",
+      "current_attendees": 0,
+      "status": "approved",
+      "created_at": "2025-08-24 20:53:16.044994",
+      "image_path": "uploads/ddc9f9ee-cc38-47f5-8d62-cf59f276c1d9_darth-vader-lightsaber-dark-background-smoke-red-background-3840x2160-8219.jpg",
+      "is_paid": true,
+      "price": 120.0,
+      "is_competition": true,
+      "team_size_min": 2,
+      "team_size_max": 4
+    }
+  },
+  "registrations": {
+    "63dde4fd-e225-4f80-9c4e-60158b35fb6b": {
+      "id": "63dde4fd-e225-4f80-9c4e-60158b35fb6b",
+      "user_id": "03b6d2c3-3632-43fb-82ae-87b85329f273",
+      "event_id": "fdd9d100-17a0-42f8-b770-ad1de8e166ec",
+      "registered_at": "2025-08-23 06:02:26.648060",
+      "attended": true,
+      "qr_code": "iVBORw0KGgoAAAANSUhEUgAAAeoAAAHqAQAAAADjFjCXAAAEeUlEQVR4nO1dS47jOAylaAO1TIA5QB/FdbPC3Cw5Sh1ggHgZIAEH/OjjdM+iqQzitPgWjiXnITbqgRQ/ciWCDpyxhw0QdDfQT2UE3Q30UxlBdwP9VEbQ3UA/lRF0N9BPZQR9ZHoyzADnlJLOfcphTUnP0vGeAHgo+NzNzbuBfioj6H4QAxb5uEwEy0XmbnxtIoAD8eEGdOKz5TJRwzi99bNj0F9MX8180UmHM8BC1yRDou8PkyMP1Sbu6eadQC9REfSn0ZP61QMR/Z0+KH1dOEHy46r+1/zqf9M7f/03gb9LCPo+6PPDmGCVwxEADv8kOvMib2Fb93/8OgZ9SDr8tK6jG8iZLuR4XadeV5d0sa4rCHov/SxxKRs4WD9I3ezXNy/uvmdIXyxHRvqEu4aw8Mxf9wLdTEHQX+thqYwJVk6QCA43gPNx4qtXnrsnar/69s+OQX+thxVwlGqeU/2quFS+Ir5WEymSQ7kpLTxsBxBGpxMLKYtLksGWOUnpByvse2aZXZOIMH3CpE54HzfvBvqpjKD7QRob5GSc+lW5wLbOTJ98TyKMbP8obB0G3Q0qMMGJc+UzDlrV/nFcm4elSkGhui7gwHTItm7aZk7kmhTIitbEzMlVPYTquoAD06FRnS7u1K9mcZW5h9qsIlTnBw5MB1FPO1E8rCWITYS58M9nprlQXQ9wYDqYfA6t59wUKIrMNIeS5SgI1fmBA9PB5MM+tAlVdSFnwxzXlmKYrv9CdV3AgemgQlKoIWvjVQ0kFJpDLl+hUF0XcGA6VPOVDd5PLQBNmBEetiLo/aoDNV/mPnMOxfxqLZUJJ1T39n933Es0YVD3WVvWZa7mkC3qgPCwGHQ3qOIhXtUqWUkQb4MLCg+LQe/uJb7PxL102jwMB5Imp5u22y2XY4JFYw7pg5roT3h2DPpLVZdYSEm0xpCPtJA01PFhZf2xMAGmW1pOfPX09s+OQd9JDAsyZ5GrFfkfWlDy5kUKD9sDHJgOD/m6TeE/dz9ZCcwyxyY9CtV1AQemg9k6rbRmScmF0lDc9JzYHIStg6A/wdZNOZAtrcWaNNkkjWsiRRGq8wMHpoPpJ+8Cq5mT3FBHW1sXXZ0ZQfeDVFfFkTatnZoMbvtQrEBbDeNbPzsGfU91WColsNpu12zADg8rCPozVAeqplyHbRrqSgxbl3kQHhaD7gYV91lXc7W15LG1vWIJ1UHQe/f+T2LrSkWCp9ZUtv3nt+tIWeJPeXYM+h6yxLDZimjGbetrc6xLsa7DoHfSlyZfwgfZ+69De+2JvACgaTfe0c17gW6mIOj90QSYIbNyV40c2i1jSinZFApb5wcOTJ9/NUnnJI70vnlr4jrfuAVlhvPxQtFzAkF/nq2DUgyzlvXah1Kq/zlzF7auAzgwfbZPaa1bbSANdQnWv3T9Ji+MTcsFiCPcGeBwlTD35TePQX9rW2fY2rW6AbF5a127M5bC1vmBA9NT/Pc6L9DNFATdDfRTGUF3A/1URtDdQD+VEXQ30E9lBN0N9FNhcPq/RjBvxsDFDqQAAAAASUVORK5CYII="
+    }
+  },
+  "feedback": {},
+  "notifications": {
+    "3e4f23b9-cd64-4a56-b5c0-47821e634d58": {
+      "id": "3e4f23b9-cd64-4a56-b5c0-47821e634d58",
+      "user_id": "45cd0005-8aba-4e5b-b115-c29f3ed82934",
+      "title": "Event Approved",
+      "message": "Your event \"Hackathon\" has been approved!",
+      "type": "info",
+      "read": false,
+      "created_at": "2025-08-22 20:43:36.504192"
+    },
+    "d4e5e955-4e3e-4670-b229-9e7b38c02a4a": {
+      "id": "d4e5e955-4e3e-4670-b229-9e7b38c02a4a",
+      "user_id": "03b6d2c3-3632-43fb-82ae-87b85329f273",
+      "title": "Registration Successful",
+      "message": "You have successfully registered for Hackathon",
+      "type": "info",
+      "read": false,
+      "created_at": "2025-08-22 20:44:12.022822"
+    },
+    "78d2f7b8-3557-4397-86f6-cdc794ca622a": {
+      "id": "78d2f7b8-3557-4397-86f6-cdc794ca622a",
+      "user_id": "03b6d2c3-3632-43fb-82ae-87b85329f273",
+      "title": "Registration Successful",
+      "message": "You have successfully registered for Hackathon",
+      "type": "info",
+      "read": false,
+      "created_at": "2025-08-22 22:35:23.363935"
+    },
+    "a4fc1935-743a-419e-8461-7bdb9873de2b": {
+      "id": "a4fc1935-743a-419e-8461-7bdb9873de2b",
+      "user_id": "45cd0005-8aba-4e5b-b115-c29f3ed82934",
+      "title": "Event Approved",
+      "message": "Your event \"Cooding Quest\" has been approved!",
+      "type": "info",
+      "read": false,
+      "created_at": "2025-08-23 06:01:51.613862"
+    },
+    "36bd9880-43df-4009-8455-931f93acff78": {
+      "id": "36bd9880-43df-4009-8455-931f93acff78",
+      "user_id": "03b6d2c3-3632-43fb-82ae-87b85329f273",
+      "title": "Registration Successful",
+      "message": "You have successfully registered for Hackathon",
+      "type": "info",
+      "read": false,
+      "created_at": "2025-08-23 06:02:26.709740"
+    },
+    "0071d4ca-dcc1-4d45-87ff-3343d182b8d6": {
+      "id": "0071d4ca-dcc1-4d45-87ff-3343d182b8d6",
+      "user_id": "45cd0005-8aba-4e5b-b115-c29f3ed82934",
+      "title": "Event Approved",
+      "message": "Your event \"AI Agents Workshop\" has been approved!",
+      "type": "info",
+      "read": false,
+      "created_at": "2025-08-24 09:46:46.865168"
+    },
+    "cfb95660-b02f-46a6-b3b4-6123d9fef654": {
+      "id": "cfb95660-b02f-46a6-b3b4-6123d9fef654",
+      "user_id": "45cd0005-8aba-4e5b-b115-c29f3ed82934",
+      "title": "Event Approved",
+      "message": "Your event \"Codeathon\" has been approved!",
+      "type": "info",
+      "read": false,
+      "created_at": "2025-08-24 09:46:48.498350"
+    },
+    "53e592a5-cf0d-46e0-b3a0-9e590ff29ac9": {
+      "id": "53e592a5-cf0d-46e0-b3a0-9e590ff29ac9",
+      "user_id": "03b6d2c3-3632-43fb-82ae-87b85329f273",
+      "title": "Registration Successful",
+      "message": "You have successfully registered for Codeathon",
+      "type": "info",
+      "read": false,
+      "created_at": "2025-08-24 09:46:58.999648"
+    },
+    "63b7b2d1-2637-4768-80fb-28f8db787395": {
+      "id": "63b7b2d1-2637-4768-80fb-28f8db787395",
+      "user_id": "03b6d2c3-3632-43fb-82ae-87b85329f273",
+      "title": "Event Deleted",
+      "message": "The event \"Codeathon\" has been permanently deleted by the organizer.",
+      "type": "info",
+      "read": false,
+      "created_at": "2025-08-24 20:45:24.453961"
+    },
+    "44834970-e788-4698-a800-d7f1ef280d7c": {
+      "id": "44834970-e788-4698-a800-d7f1ef280d7c",
+      "user_id": "45cd0005-8aba-4e5b-b115-c29f3ed82934",
+      "title": "Event Approved",
+      "message": "Your event \"Codeathon\" has been approved!",
+      "type": "info",
+      "read": false,
+      "created_at": "2025-08-24 20:53:35.041445"
+    }
+  },
+  "teams": {
+    "509a2064-a9a5-4769-8193-5daaa80c2c73": {
+      "id": "509a2064-a9a5-4769-8193-5daaa80c2c73",
+      "name": "Tech Yakuzas",
+      "leader_id": "03b6d2c3-3632-43fb-82ae-87b85329f273",
+      "event_id": "ddc9f9ee-cc38-47f5-8d62-cf59f276c1d9",
+      "members": [
+        "03b6d2c3-3632-43fb-82ae-87b85329f273",
+        "dd1dbb93-a6af-4cf7-b8ba-bdce24f7117a"
+      ],
+      "created_at": "2025-08-24 20:53:58.334718",
+      "status": "active",
+      "team_code": "5D0CC544"
+    }
+  },
+  "submissions": {},
+  "achievements": {},
+  "leaderboards": {}
+}

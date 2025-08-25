@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Join Team{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-user-plus"></i> Join Team</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <div class="alert alert-info">
+                                <strong>How to join a team:</strong><br>
+                                • Get the team code from your team leader<br>
+                                • Enter the code below to join the team<br>
+                                {% if event %}
+                                    • Team size for this event: {{ event.get('team_size_min', 2) }}-{{ event.get('team_size_max', 4) }} members<br>
+                                {% endif %}
+                                • You can only be in one team per event
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="team_code" class="form-label">Team Code</label>
+                            <input type="text" class="form-control" id="team_code" name="team_code" 
+                                   placeholder="Enter 8-character team code" maxlength="8" required>
+                            <div class="form-text">Ask your team leader for the team code</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt"></i> Join Team
+                            </button>
+                            <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

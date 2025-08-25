@@ -1,0 +1,73 @@
+
+{% extends "base.html" %}
+
+{% block title %}Submit Project - {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-upload"></i> Submit Project for {{ event.title }}</h4>
+                    <small class="text-muted">Team: {{ team.name }}</small>
+                </div>
+                <div class="card-body">
+                    {% if existing_submission %}
+                        <div class="alert alert-info">
+                            <strong>Note:</strong> You have already submitted for this competition. 
+                            You can update your submission below.
+                        </div>
+                    {% endif %}
+                    
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="submission_type" class="form-label">Submission Type</label>
+                            <select class="form-select" id="submission_type" name="submission_type" required>
+                                <option value="link" {% if existing_submission and existing_submission.submission_type == 'link' %}selected{% endif %}>
+                                    Link (GitHub, Drive, etc.)
+                                </option>
+                                <option value="text" {% if existing_submission and existing_submission.submission_type == 'text' %}selected{% endif %}>
+                                    Text Description
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="content" class="form-label">Submission Content</label>
+                            <textarea class="form-control" id="content" name="content" rows="4" 
+                                      placeholder="Paste your project link or provide detailed description..." required>{{ existing_submission.content if existing_submission else '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Project Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="6" 
+                                      placeholder="Describe your project, technologies used, challenges faced, etc...">{{ existing_submission.description if existing_submission else '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="alert alert-warning">
+                                <strong>Submission Guidelines:</strong><br>
+                                • Ensure your project meets all competition requirements<br>
+                                • Double-check all links are publicly accessible<br>
+                                • You can update your submission until the deadline<br>
+                                • Deadline: {{ event.submission_deadline.strftime('%B %d, %Y at %I:%M %p') if event.submission_deadline else 'TBD' }}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-paper-plane"></i> 
+                                {% if existing_submission %}Update Submission{% else %}Submit Project{% endif %}
+                            </button>
+                            <a href="{{ url_for('team.my_teams') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Teams
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
